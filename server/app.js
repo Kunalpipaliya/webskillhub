@@ -1,0 +1,59 @@
+var createError = require('http-errors');
+var express = require('express');
+var path = require('path');
+var cookieParser = require('cookie-parser');
+var logger = require('morgan');
+const cors = require("cors")
+const mongoose = require("mongoose")// Add this to your server entry point (index.js / app.js)
+
+// This makes everything inside public/images available at http://localhost:5000/images
+
+mongoose.connect("mongodb://localhost:27017/webskillhub")
+  .then(() => {
+    console.log("connection success");
+  })
+  .catch((err) => {
+    console.log(err);
+  })
+var usersRouter = require('./routes/users');
+const authRouter = require("./routes/auth")
+const studentRouter = require("./routes/student")
+const marksRouter = require("./routes/marks")
+const noticeRouter=require("./routes/notice")
+const { log } = require('console');
+
+var app = express();
+
+// view engine setup
+app.set('views', path.join(__dirname, 'views'));
+app.set('view engine', 'ejs');
+app.use(cors())
+app.use(logger('dev'));
+app.use(express.json());
+app.use(express.urlencoded({ extended: false }));
+app.use(cookieParser());
+app.use(express.static(path.join(__dirname, 'public')));
+app.use('/', authRouter);
+app.use("/student", studentRouter)
+app.use("/results", marksRouter)
+app.use('/users', usersRouter);
+app.use("/notice",noticeRouter)
+app.use('/images', express.static(path.join(__dirname, 'public/images')));
+
+// catch 404 and forward to error handler
+app.use(function (req, res, next) {
+  next(createError(404));
+});
+
+// error handler
+app.use(function (err, req, res, next) {
+  // set locals, only providing error in development
+  res.locals.message = err.message;
+  res.locals.error = req.app.get('env') === 'development' ? err : {};
+
+  // render the error page
+  res.status(err.status || 500);
+  res.render('error');
+});
+
+module.exports = app;

@@ -22,6 +22,7 @@ import Student from '../pages/Students'
 import Profile from '../pages/Profile'
 import Counter from "./Counter";
 import Result from "../pages/Result";
+import Notice from "../pages/Notice";
 const currentUser = JSON.parse(localStorage.getItem("currentUser"));
 const drawerWidth = 240;
 function ResponsiveDrawer(props) {
@@ -58,7 +59,7 @@ function ResponsiveDrawer(props) {
       {
         currentUser.roll === "admin" ?
           <List sx={{ flexGrow: 1 }}>
-            {["Dashboard", "Student", "Result", "Profile"].map((text, index) => (
+            {["Dashboard", "Student","Notice","Result", "Profile"].map((text, index) => (
               <ListItem key={text} disablePadding>
                 <ListItemButton>
                   <Link
@@ -73,7 +74,7 @@ function ResponsiveDrawer(props) {
           </List>
           :
           <List sx={{ flexGrow: 1 }}>
-            {["Result","Profile"].map((text, index) => (
+            {["Notice","Result","Profile"].map((text, index) => (
               <ListItem key={text} disablePadding>
                 <ListItemButton>
                   <Link
@@ -247,6 +248,9 @@ function ResponsiveDrawer(props) {
           </Route>
           <Route path={`${path}/result`}>
             <Result currentUser={currentUser} />
+          </Route>
+          <Route path={`${path}/notice`}>
+              <Notice currentUser={currentUser}/>
           </Route>
         </Switch>
 

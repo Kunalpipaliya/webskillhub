@@ -90,7 +90,7 @@ exports.updateResult = async (req, res) => {
     try {
         const id = req.params.id
         const data = req.body
-        const update = await marksModel.findByIdAndUpdate(id, data)
+        const update = await marksModel.findByIdAndUpdate(id, data,{new:true})
         res.status(200).json({
             status: "Success",
             message: "Result Updated Successfully",

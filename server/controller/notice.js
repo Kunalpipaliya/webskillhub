@@ -94,4 +94,40 @@ exports.createNotice = async (req, res) => {
             message: error.message
         })
     }
-}       
+}
+
+
+exports.deleteNotice = async (req, res) => {
+    try {
+        const id = req.params.id
+        const data = await noticeModel.findByIdAndDelete(id)
+        res.status(200).json({
+            status: "Success",
+            message: "Notice Deleted Successfully",
+            data: data
+        })
+    } catch (error) {
+        res.status(404).json({
+            status: "Fail",
+            message: error.message
+        })
+    }
+}
+
+exports.updateNotice = async (req, res) => {
+    try {
+        const id = req.params.id
+        const data = req.body
+        const update = await noticeModel.findByIdAndUpdate(id, data,{ new: true })
+        res.status(200).json({
+            status: "Success",
+            message: "Notice updated successfully",
+            data: update
+        })
+    } catch (error) {
+        res.status(404).json({
+            status: "Fail",
+            message: error.message
+        })
+    }
+}

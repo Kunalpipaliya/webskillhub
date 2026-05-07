@@ -56,11 +56,11 @@ exports.updateStudent = async (req, res) => {
     try {
         const id = req.params.id
         const data = req.body
-        const update = await studentModel.findByIdAndUpdate(id, data)
+        const update = await studentModel.findByIdAndUpdate(id, data,{ new: true })
         res.status(200).json({
             status: "Success",
             message: "Student Updated Successfully",
-            data: data
+            data: update
         })
     } catch (error) {
         res.status(404).json({

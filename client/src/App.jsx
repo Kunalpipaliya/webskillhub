@@ -11,6 +11,7 @@ function App() {
     <div>
       <BrowserRouter>
         <Switch>
+         
           <Route path="/result" currentUser={currentUser}>
             <Result/>
           </Route>

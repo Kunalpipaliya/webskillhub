@@ -16,7 +16,7 @@ import Toolbar from "@mui/material/Toolbar";
 import Typography from "@mui/material/Typography";
 import LogoutIcon from "@mui/icons-material/Logout";
 import { useHistory } from 'react-router-dom'
-import { Route, Switch, useRouteMatch } from "react-router-dom/cjs/react-router-dom.min";
+import { Redirect, Route, Switch, useRouteMatch } from "react-router-dom/cjs/react-router-dom.min";
 import { Link } from 'react-router-dom'
 import Student from '../pages/Students'
 import Profile from '../pages/Profile'
@@ -59,7 +59,7 @@ function ResponsiveDrawer(props) {
       {
         currentUser.roll === "admin" ?
           <List sx={{ flexGrow: 1 }}>
-            {["Dashboard", "Student","Notice","Result", "Profile"].map((text, index) => (
+            {["Dashboard", "Student", "Notice", "Result", "Profile"].map((text, index) => (
               <ListItem key={text} disablePadding>
                 <ListItemButton>
                   <Link
@@ -74,7 +74,7 @@ function ResponsiveDrawer(props) {
           </List>
           :
           <List sx={{ flexGrow: 1 }}>
-            {["Notice","Result","Profile"].map((text, index) => (
+            {["Dashboard", "Notice", "Result", "Profile"].map((text, index) => (
               <ListItem key={text} disablePadding>
                 <ListItemButton>
                   <Link
@@ -238,10 +238,11 @@ function ResponsiveDrawer(props) {
         <Toolbar></Toolbar>
         <Switch>
           <Route exact path={`${path}`}>
-            <Counter />
+            <Counter currentUser={currentUser} />
           </Route>
           <Route path={`${path}/student`}>
-            <Student currentUser={currentUser} />
+
+            {currentUser.roll === "admin" ? <Student currentUser={currentUser} /> : <Redirect to={`${path}`}/>}
           </Route>
           <Route path={`${path}/profile`}>
             <Profile currentUser={currentUser} />
@@ -250,7 +251,7 @@ function ResponsiveDrawer(props) {
             <Result currentUser={currentUser} />
           </Route>
           <Route path={`${path}/notice`}>
-              <Notice currentUser={currentUser}/>
+            <Notice currentUser={currentUser} />
           </Route>
         </Switch>
 

@@ -54,21 +54,18 @@ exports.viewUsers = async (req, res) => {
 
 exports.createUser = async (req, res) => {
     try {
-        const data = req.body
-        data.profile=req.file.filename
-        data.password = await bcrypt.hash(data.password, 10)
-        const user = await authModel.create(data)
-        sendMail(user.email).catch(err => console.log(err))
-        res.status(201).json({
-            status: "success",
-            message: "User created successfully",
-            data: user
-        })
+        const data = req.body;
+
+        // FIX: Check if file exists before accessing filename
+        data.profile = req.file ? req.file.filename : "";
+
+        data.password = await bcrypt.hash(data.password, 10);
+        const user = await authModel.create(data);
+
+        sendMail(user.email).catch(err => console.log(err));
+        res.status(201).json({ status: "success", data: user });
     } catch (error) {
-        res.status(404).json({
-            status: "Fail",
-            message: error.message
-        })
+        res.status(500).json({ status: "Fail", message: error.message });
     }
 }
 
@@ -91,21 +88,49 @@ exports.deleteUser = async (req, res) => {
 
 exports.updateUser = async (req, res) => {
     try {
-        const id = req.params.id
-        const data = req.body
-        const update = await authModel.findByIdAndUpdate(id, data, { new: true })
+        const id = req.params.id;
+        let updateData = { ...req.body };
+
+        // 1. Handle the profile image if it exists
+        if (req.file) {
+            updateData.profile = req.file.filename;
+        }
+
+        // 2. FIX THE LOGIN ISSUE: 
+        // Only hash the password if it's a NEW password.
+        // If it starts with '$2b$', it's already a bcrypt hash from the DB, so we remove it.
+        if (updateData.password && !updateData.password.startsWith('$2b$')) {
+            updateData.password = await bcrypt.hash(updateData.password, 10);
+        } else {
+            // Remove it from the update object so we don't accidentally re-hash or overwrite it
+            delete updateData.password;
+        }
+
+        // 3. Update the user   
+        const update = await authModel.findByIdAndUpdate(id, updateData, {
+            new: true,
+            runValidators: true
+        });
+
+        if (!update) {
+            return res.status(404).json({
+                status: "Fail",
+                message: "User not found"
+            });
+        }
+
         res.status(200).json({
             status: "Success",
-            message: "User details updated succcessfully",
+            message: "User details updated successfully",
             data: update
-        })
+        });
     } catch (error) {
-        res.status(404).json({
+        res.status(500).json({
             status: "Fail",
             message: error.message
-        })
+        });
     }
-}
+};
 
 exports.loginUser = async (req, res) => {
     try {

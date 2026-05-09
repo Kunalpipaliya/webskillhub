@@ -15,13 +15,18 @@ const storage = multer.diskStorage({
 
 const upload = multer({ storage: storage })
 const authController=require("../controller/auth")
-router.get("/",authController.viewUsers)
-router.post("/createUser",upload.single('profile'),authController.createUser)
-router.delete("/deleteUser/:id",authController.deleteUser)
-router.patch("/updateUser/:id",authController.updateUser)
 
+router.get("/", authController.viewUsers)
 
-router.post("/login",authController.loginUser)
+// Create user (Already has multer)
+router.post("/createUser", upload.single('profile'), authController.createUser)
 
+router.delete("/deleteUser/:id", authController.deleteUser)
 
-module.exports=router       
+// --- CHANGE THIS LINE ---
+// Add upload.single('profile') here so Multer handles the incoming file
+router.patch("/updateUser/:id", upload.single('profile'), authController.updateUser)
+
+router.post("/login", authController.loginUser)
+
+module.exports=router

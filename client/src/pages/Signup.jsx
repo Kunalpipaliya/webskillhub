@@ -4,16 +4,22 @@ import axios from 'axios'
 import { useHistory } from "react-router-dom";
 
 const Signup = () => {
-    const navigate=useHistory()
+    const navigate = useHistory()
     const handleSubmit = (values, { resetForm }) => {
-        axios.post("http://localhost:3001/createUser", values)
+        // You MUST use FormData because your backend uses Multer
+        const formdata = new FormData();
+        formdata.append("username", values.username);
+        formdata.append("email", values.email);
+        formdata.append("password", values.password);
+        formdata.append("roll", values.roll);
+        // Even if profile is empty, Multer needs to handle the multipart request
+
+        axios.post("http://localhost:3001/createUser", formdata)
             .then(() => {
                 console.log("signup success");
-                navigate.push("/")
+                navigate.push("/");
             })
-            .catch((err) => {
-                console.log(err);
-            })
+            .catch((err) => console.log(err));
     }
     return (
         <div className='bg-light'>
@@ -24,8 +30,8 @@ const Signup = () => {
                         username: "",
                         email: "",
                         password: "",
-                        profile: "",
-                        roll:"user"
+                        profile: null,
+                        roll: "user"
                     }}
                     onSubmit={handleSubmit}
                 >

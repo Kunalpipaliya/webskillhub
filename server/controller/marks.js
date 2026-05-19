@@ -14,7 +14,7 @@ exports.viewResult = async (req, res) => {
         const data = await marksModel.aggregate([
             {
                 $lookup: {
-                    from: "students",
+                    from: "users",
                     localField: "student",
                     foreignField: "_id",
                     as: "studentInfo"
@@ -38,6 +38,23 @@ exports.viewResult = async (req, res) => {
                 }
             }
         ])
+        res.status(200).json({
+            status: "Success",
+            message: "Data Found",
+            data: data
+        })
+    } catch (error) {
+        res.status(404).json({
+            status: "Fail",
+            message: error.message
+        })
+    }
+}
+
+exports.currentUserResult = async (req, res) => {
+    try {
+        const id = req.params.id
+        const data = await marksModel.findById(id)
         res.status(200).json({
             status: "Success",
             message: "Data Found",
@@ -90,7 +107,7 @@ exports.updateResult = async (req, res) => {
     try {
         const id = req.params.id
         const data = req.body
-        const update = await marksModel.findByIdAndUpdate(id, data,{new:true})
+        const update = await marksModel.findByIdAndUpdate(id, data, { new: true })
         res.status(200).json({
             status: "Success",
             message: "Result Updated Successfully",

@@ -5,4 +5,6 @@ router.get("/viewResult",markscontroller.viewResult)
 router.post("/createResult",markscontroller.createResult)
 router.delete("/deleteResult/:id",markscontroller.deleteResult)
 router.patch("/updateResult/:id",markscontroller.updateResult)
+
+router.get("/viewResult/:id",markscontroller.currentUserResult)
 module.exports=router

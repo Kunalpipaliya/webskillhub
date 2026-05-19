@@ -17,7 +17,6 @@ mongoose.connect("mongodb://localhost:27017/webskillhub")
   })
 var usersRouter = require('./routes/users');
 const authRouter = require("./routes/auth")
-const studentRouter = require("./routes/student")
 const marksRouter = require("./routes/marks")
 const noticeRouter=require("./routes/notice")
 const { log } = require('console');
@@ -34,7 +33,6 @@ app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 app.use('/', authRouter);
-app.use("/student", studentRouter)
 app.use("/results", marksRouter)
 app.use('/users', usersRouter);
 app.use("/notice",noticeRouter)
